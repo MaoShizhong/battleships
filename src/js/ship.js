@@ -1,7 +1,8 @@
 export class Ship {
-    constructor(length, testArray) {
+    constructor(length, testArray, orientation = 'horizontal') {
         this.length = length;
-        this.coordinates = testArray ? testArray : Array(length).fill().map(() => new Array(2));
+        this.coordinates = testArray ? testArray : Array(length).fill().map(() => Array(2));
+        this.orientation = orientation;
     }
 
     hit(coords) {
@@ -13,5 +14,9 @@ export class Ship {
 
     isSunk() {
         return this.coordinates.every(([a, b]) => a === 'X' && b === 'X');
+    }
+
+    changeOrientation() {
+        this.orientation = this.orientation === 'horizontal' ? 'vertical' : 'horizontal';
     }
 }
