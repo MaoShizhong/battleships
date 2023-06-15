@@ -1,40 +1,49 @@
-export class Gameboard {
-    // ? will change to undefined - will eventually be adjustable in UI
-    // ? static currentShipSize = 5;
+import { Player } from './player';
+import { Ship } from './ship';
 
+export class Gameboard {
     constructor(height, width, shipCount = 5) {
+        this.player = new Player();
         this.height = height;
         this.width = width;
         this.board = Array(height).fill().map(() => Array(width).fill(false));
+        this.ships = [];
         this.shipsRemaining = shipCount;
+        this.currentShipSize = 5;
+        this.currentShipOrientation = 'horizontal';
     }
 
-    canFitShip(ship, coordinate) {
-        if (ship.orientation === 'horizontal' && coordinate[1] + ship.length - 1 < this.width) {
-            for (let i = 0, j = coordinate[1]; i < ship.length; i++, j++) {
-                if (this.board[coordinate[0]][j] === true) return false;
-            }
-            return true;
+    canFitShip(y, x) {
+        if (
+            (this.currentShipOrientation === 'horizontal' && x + this.currentShipSize > this.width)
+            || (this.currentShipOrientation === 'vertical' && y + this.currentShipSize > this.height)
+        ) return false;
+
+        for (let i = 0; i < this.currentShipSize; i++) {
+            if (this.board[y][x] === true) return false;
+
+            this.currentShipOrientation === 'vertical' ? y++ : x++;
         }
-        else if (ship.orientation === 'vertical' && coordinate[0] + ship.length - 1 < this.height) {
-            for (let i = 0, j = coordinate[0]; i < ship.length; i++, j++) {
-                if (this.board[j][coordinate[1]] === true) return false;
-            }
-            return true;
-        }
-        return false;
+        return true;
     }
 
-    placeShip(ship, coordinate) {
-        if (ship.orientation === 'horizontal') {
-            for (let i = 0, j = coordinate[1]; i < ship.length; i++, j++) {
-                this.board[coordinate[0]][j] = true;
-            }
+    placeShip(y, x) {
+        if (!this.shipsRemaining) throw new Error('No more ships left to place!');
+        else if (!this.canFitShip(y, x)) throw new Error('Ship will not fit');
+
+        const shipCoordinates = [];
+        for (let i = 0; i < this.currentShipSize; i++) {
+            this.board[y][x] = true;
+            shipCoordinates.push([y, x]);
+
+            this.currentShipOrientation === 'vertical' ? y++ : x++;
         }
-        else {
-            for (let i = 0, j = coordinate[0]; i < ship.length; i++, j++) {
-                this.board[j][coordinate[1]] = true;
-            }
-        }
+
+        this.ships.push(new Ship(shipCoordinates, this.currentShipOrientation));
+        this.shipsRemaining--;
+    }
+
+    changeShipOrientation() {
+        this.currentShipOrientation = this.currentShipOrientation === 'horizontal' ? 'vertical' : 'horizontal';
     }
 }

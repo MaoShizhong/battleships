@@ -1,13 +1,13 @@
 export class Ship {
-    constructor(length, testArray, orientation = 'horizontal') {
-        this.length = length;
-        this.coordinates = testArray ? testArray : Array(length).fill().map(() => Array(2));
+    constructor(coordinates, orientation) {
+        this.coordinates = coordinates;
         this.orientation = orientation;
+        this.length = this.coordinates.length;
     }
 
-    hit(coords) {
+    hit(y, x) {
         const i = this.coordinates.findIndex(([a, b]) => {
-            return a === coords[0] && b === coords[1];
+            return a === y && b === x;
         });
         this.coordinates[i] = ['X', 'X'];
     }
