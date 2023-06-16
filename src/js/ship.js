@@ -1,7 +1,7 @@
 export class Ship {
     constructor(coordinates) {
         this.coordinates = coordinates;
-        this.length = this.coordinates.length;
+        this.name = Ship.shipName(this.coordinates.length);
     }
 
     hit(y, x) {
@@ -11,5 +11,18 @@ export class Ship {
 
     isSunk() {
         return this.coordinates.every(([a, b]) => a === 'X' && b === 'X');
+    }
+
+    static shipName(length) {
+        switch (length) {
+            case 5:
+                return 'Zhanxian';
+            case 4:
+                return 'Haihu';
+            case 3:
+                return 'Mengchong';
+            case 2:
+                return 'Yuting';
+        }
     }
 }

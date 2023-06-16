@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;500;800&display=swap');
+
+@font-face {
+    font-family: 'Konfuciuz';
+    src: url('../fonts/konfuciuz_fat.woff2') format('woff2'),
+         url('../fonts/konfuciuz_fat.ttf') format('truetype');
+}
+
+:root {
+    --columns: 10;
+    --rows: 10;
+}
+
+* {
+    margin: 0;
+}
+
+body {
+    background-color: #fce7cb;
+    background-image: url("https://www.transparenttextures.com/patterns/paper-1.png");
+    font-family: 'Sora', sans-serif;
+    min-height: calc(100svh - 8px);
+}
+
+#logo {
+    margin: 1rem 0 0.4rem;
+    height: 5rem;
+}
+
+#logo + h1 {
+    font-family: 'Konfuciuz';
+    font-size: 2.8rem;
+}
+
+main {
+    flex: 1;
+    width: 100%;
+}
+
+.stretch {
+    align-self: stretch;
+}
+
+.board {
+    aspect-ratio: 1 / 1;
+    border: 0.8rem double black;
+    display: grid;
+    grid-template-columns: repeat(var(--columns), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+
+    & > * {
+        border: 1px solid black;
+    }
+
+    & > .cell {
+        background-color: #fdead2;
+
+        &:hover {
+            background-color: #f0c48f;
+            cursor: pointer;
+        }
+    }
+}
+
+.placement {
+    height: min(55svh, 35rem);
+    margin-block: 2.5rem;
+}
+
+.ships {
+    & > .ship-placement {
+        flex: 3;
+        text-align: center;
+    }
+
+    & > #rotate {
+        flex: 1;
+
+        & > img {
+            width: 2.5rem;
+        }
+    }
+}
+
+.transparent {
+    background-color: transparent;
+    border: none;
+}
+
+.grow {
+    transition: 200ms ease;
+
+    &:hover {
+        cursor: pointer;
+        transform: scale(1.2);
+    }
+}
+
+.flex {
+    display: flex;
+}
+
+.vert {
+    flex-direction: column;
+}
+
+.center {
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-start {
+    justify-content: flex-start;
+}
+
+.between {
+    justify-content: space-between;
+    align-items: center;
+}

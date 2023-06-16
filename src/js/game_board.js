@@ -2,13 +2,18 @@ import { Player } from './player';
 import { Ship } from './ship';
 
 export class Gameboard {
-    constructor(height, width, type = false, name = 'Foo', shipCount = 5) {
+    constructor(height, width, type = false, name = 'Foo') {
         this.player = new Player(type, name);
         this.height = height;
         this.width = width;
         this.board = Array(height).fill().map(() => Array(width).fill(false));
         this.ships = [];
-        this.shipsRemaining = shipCount;
+        this.shipLimits = {
+            'Zhanxian': 1,
+            'Haihu': 1,
+            'Mengchong': 2,
+            'Yuting': 2,
+        };
         this.currentShipSize = 5;
         this.currentShipOrientation = 'horizontal';
 
@@ -31,7 +36,7 @@ export class Gameboard {
     }
 
     placeShip(y, x) {
-        if (!this.shipsRemaining) throw new Error('No more ships left to place!');
+        if (this.noShipsOfType()) throw new Error('No more of those ships left to place!');
         else if (!this.canFitShip(y, x)) throw new Error('Ship will not fit');
 
         const shipCoordinates = [];
@@ -43,7 +48,7 @@ export class Gameboard {
         }
 
         this.ships.push(new Ship(shipCoordinates, this.currentShipOrientation));
-        this.shipsRemaining--;
+        this.shipLimits[this.ships.at(-1).name]--;
     }
 
     changeShipOrientation() {
@@ -77,5 +82,9 @@ export class Gameboard {
             const i = this.ships.indexOf(shipToHit);
             this.ships.splice(i, 1);
         }
+    }
+
+    noShipsOfType() {
+        return this.shipLimits[Ship.shipName(this.currentShipSize)] === 0;
     }
 }
