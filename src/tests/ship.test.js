@@ -8,17 +8,17 @@ describe('Instantiate ship with a given coordinates array (for hit testing only)
 
     test.each(arrays)(
         '%p correctly loaded as this.coordinates',
-        (array) => expect(new Ship(array, 'horizontal').coordinates).toEqual(array)
+        (array) => expect(new Ship(array).coordinates).toEqual(array)
     );
     test.each(arrays)(
         '%p correctly sets this.length',
-        (array, length) => expect(new Ship(array, 'horizontal').length).toEqual(length)
+        (array, length) => expect(new Ship(array).length).toEqual(length)
     );
 });
 
 describe('Test ship.hit and .isSunk', () => {
-    const shipOne = new Ship([[1, 5], [3, 6]], 'horizontal');
-    const shipTwo = new Ship([[1, 5], [5, 0], [3, 2], [4, 4]], 'vertical');
+    const shipOne = new Ship([[1, 5], [3, 6]]);
+    const shipTwo = new Ship([[1, 5], [5, 0], [3, 2], [4, 4]]);
 
     function hitShip(ship, y, x) {
         ship.hit(y, x);
