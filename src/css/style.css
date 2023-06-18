@@ -1,14 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;500;800&display=swap');
 
 @font-face {
-    font-family: 'Konfuciuz';
-    src: url('../fonts/konfuciuz_fat.woff2') format('woff2'),
-         url('../fonts/konfuciuz_fat.ttf') format('truetype');
+    font-family: 'Shanghai';
+    src: url('../fonts/shanghai.woff2') format('woff2'),
+         url('../fonts/shanghai.ttf') format('truetype');
 }
 
 :root {
     --columns: 10;
     --rows: 10;
+    --c-red: #AA381E;
+    --oob: #dbba9a;
 }
 
 * {
@@ -23,22 +25,30 @@ body {
 }
 
 #logo {
-    margin: 1rem 0 0.4rem;
+    margin: 1rem 0 0;
     height: 5rem;
 }
 
 #logo + h1 {
-    font-family: 'Konfuciuz';
+    font-family: 'Shanghai';
     font-size: 2.8rem;
 }
 
 main {
     flex: 1;
+    position: relative;
     width: 100%;
 }
 
 .stretch {
     align-self: stretch;
+}
+
+#start-game {
+    background-color: transparent;
+    font: bold 2rem 'Shanghai';
+    position: absolute;
+    top: 1rem;
 }
 
 .board {
@@ -48,38 +58,63 @@ main {
     grid-template-columns: repeat(var(--columns), 1fr);
     grid-template-rows: repeat(var(--rows), 1fr);
 
-    & > * {
-        border: 1px solid black;
-    }
-
-    & > .cell {
-        background-color: #fdead2;
-
-        &:hover {
-            background-color: #f0c48f;
-            cursor: pointer;
-        }
+    & button {
+        cursor: crosshair;
     }
 }
 
 .placement {
     height: min(55svh, 35rem);
-    margin-block: 2.5rem;
+    margin-block: 2.2rem;
+
+    & > * {
+        border: 1px solid black;
+        background-color: #fdead2;
+
+        &[data-cell~="ship"] {
+            background-color: var(--c-red);
+        }
+    }
 }
 
 .ships {
     & > .ship-placement {
         flex: 3;
         text-align: center;
+
+        & > button {
+            margin-block: 0.8rem;
+        }
     }
 
-    & > #rotate {
+    & > div:has(#delete, #rotate) {
         flex: 1;
 
-        & > img {
+        &  img {
+            margin-block: 0.2rem;
             width: 2.5rem;
         }
     }
+}
+
+button {
+    border: none;
+    cursor: pointer;
+}
+
+.current {
+    transform: scale(1.2);
+
+    & + p {
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 0.3rem;
+    }
+}
+
+.disable:not(.square) {
+    transform: scale(0.8);
+    filter: contrast(0.5);
 }
 
 .transparent {
@@ -90,8 +125,7 @@ main {
 .grow {
     transition: 200ms ease;
 
-    &:hover {
-        cursor: pointer;
+    &:hover:not(:disabled) {
         transform: scale(1.2);
     }
 }
@@ -113,7 +147,17 @@ main {
     justify-content: flex-start;
 }
 
-.between {
-    justify-content: space-between;
+.around {
+    justify-content: space-around;
     align-items: center;
+}
+
+.breathe {
+    animation: breathe 2.4s linear infinite;
+}
+
+@keyframes breathe {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
 }

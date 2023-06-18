@@ -19,12 +19,12 @@
 
         <main class="flex center">
             <div class="flex vert center stretch">
-                <div class="placement board">
-                </div>
-                <div class="ships flex between">
+                <div id="player-one" class="placement board"></div>
+
+                <div class="ships flex around">
                     <div class="ship-placement flex vert center">
                         <h4>Zhanxian<br>(1)</h4>
-                        <button class="transparent grow" value="5">
+                        <button class="transparent grow current" value="5">
                             <img src="../images/zhanxian.png" alt="5-ship">
                         </button>
                         <p>5 x 1</p>
@@ -36,10 +36,15 @@
                         </button>
                         <p>4 x 1</p>
                     </div>
-                    <button id="rotate" class="transparent grow">
-                        <img src="../images/rotate.png" alt="rotate ship">
-                        <h2>H</h2>
-                    </button>
+                    <div>
+                        <button id="delete" class="transparent grow">
+                            <img src="../images/delete.png" alt="delete ship">
+                        </button>
+                        <button id="rotate" class="transparent grow">
+                            <img src="../images/rotate.png" alt="rotate ship">
+                            <h2>H</h2>
+                        </button>
+                    </div>
                     <div class="ship-placement flex vert center">
                         <h4>Mengchong<br>(2)</h4>
                         <button class="transparent grow" value="3">

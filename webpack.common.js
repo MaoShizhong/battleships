@@ -22,10 +22,17 @@ module.exports = {
                 use: ['style-loader', 'css-loader', 'postcss-loader'],
             },
             {
-                test: /\.(jpg|png|webp)$/i,
+                test: /\.(jpg|png)$/i,
                 type: 'asset/resource',
                 generator: {
                     filename: 'images/[name]-[hash][ext]',
+                },
+            },
+            {
+                test: /\.(ttf|woff2)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'fonts/[name]-[hash][ext]',
                 },
             },
         ],

@@ -1,12 +1,16 @@
 import { Player } from './player';
 import { Ship } from './ship';
+import { UI } from './ui_controller';
+import { Placement } from './placement.js';
 
 export class Gameboard {
-    constructor(height, width, type = false, name = 'Foo') {
-        this.player = new Player(type, name);
-        this.height = height;
-        this.width = width;
-        this.board = Array(height).fill().map(() => Array(width).fill(false));
+    static height = 10;
+    static width = 10;
+
+    constructor(isAI = false, name = 'Foo') {
+        this.UIBoard = document.querySelector('#player-one');
+        this.player = new Player(isAI, name);
+        this.board = Array(Gameboard.height).fill().map(() => Array(Gameboard.width).fill('none'));
         this.ships = [];
         this.shipLimits = {
             'Zhanxian': 1,
@@ -14,60 +18,87 @@ export class Gameboard {
             'Mengchong': 2,
             'Yuting': 2,
         };
-        this.currentShipSize = 5;
-        this.currentShipOrientation = 'horizontal';
 
         // TODO: replace when game logic implemented
         this.isGameOver = false;
     }
 
-    canFitShip(y, x) {
+    canFitShip(y, x, size, orientation) {
         if (
-            (this.currentShipOrientation === 'horizontal' && x + this.currentShipSize > this.width)
-            || (this.currentShipOrientation === 'vertical' && y + this.currentShipSize > this.height)
+            (orientation === 'horizontal' && x + size > Gameboard.width)
+            || (orientation === 'vertical' && y + size > Gameboard.height)
         ) return false;
 
-        for (let i = 0; i < this.currentShipSize; i++) {
-            if (this.board[y][x] === true) return false;
+        for (let i = 0; i < size; i++) {
+            if (this.board[y][x].includes('ship')) return false;
 
-            this.currentShipOrientation === 'vertical' ? y++ : x++;
+            orientation === 'vertical' ? y++ : x++;
         }
         return true;
     }
 
-    placeShip(y, x) {
-        if (this.noShipsOfType()) throw new Error('No more of those ships left to place!');
-        else if (!this.canFitShip(y, x)) throw new Error('Ship will not fit');
+    placeShip(y, x, size = Placement.currentShipSize, orientation = Placement.currentShipOrientation) {
+        if (this.shipsOfTypeRemaining(size) && this.canFitShip(y, x, size, orientation)) {
+            const shipCoordinates = [];
 
-        const shipCoordinates = [];
-        for (let i = 0; i < this.currentShipSize; i++) {
-            this.board[y][x] = true;
-            shipCoordinates.push([y, x]);
+            for (let i = 0; i < size; i++) {
+                const position = i === 0 ? 'head' : i === size - 1 ? 'end' : 'middle';
 
-            this.currentShipOrientation === 'vertical' ? y++ : x++;
+                this.board[y][x] = `ship ${position} ${orientation}`;
+                shipCoordinates.push([y, x]);
+
+                orientation === 'vertical' ? y++ : x++;
+            }
+
+            this.ships.push(new Ship(shipCoordinates, orientation));
+            this.reduceShipCount(this.ships.at(-1).name);
+
+            if (!this.player.isAI) {
+                UI.renderBoard(this.UIBoard, this.board);
+
+                if (this.allShipsPlaced()) UI.showGameStartBtn();
+            }
         }
-
-        this.ships.push(new Ship(shipCoordinates, this.currentShipOrientation));
-        this.shipLimits[this.ships.at(-1).name]--;
     }
 
-    changeShipOrientation() {
-        this.currentShipOrientation = this.currentShipOrientation === 'horizontal' ? 'vertical' : 'horizontal';
+    deleteShip(y, x) {
+        const ship = this.findShip(y, x);
+        if (ship) {
+            ship.coordinates.forEach(coordinate => {
+                this.board[coordinate[0]][coordinate[1]] = 'none';
+            });
+
+            this.increaseShipCount(ship.name, ship.coordinates.length);
+            this.ships.splice(this.ships.indexOf(ship), 1);
+
+            UI.renderBoard(this.UIBoard, this.board);
+
+            const startBtn = document.querySelector('#start-game');
+            if (startBtn) startBtn.remove();
+        }
+    }
+
+    reduceShipCount(shipName) {
+        this.shipLimits[shipName]--;
+        if (!this.player.isAI) UI.reduceShipCount(shipName, this.shipLimits[shipName]);
+    }
+
+    increaseShipCount(shipName, shipSize) {
+        this.shipLimits[shipName]++;
+        UI.increaseShipCount(shipName, shipSize, this.shipLimits[shipName]);
     }
 
     receiveAttack(y, x) {
-        if (y < 0 || y >= this.height || x < 0 || x >= this.width) {
-            throw new Error('This square is out of bounds!');
-        }
-        if (typeof this.board[y][x] !== 'boolean') {
-            throw new Error('You have already targeted this square before! Please pick another square.');
+        if (this.board[y][x] === 'hits' || this.board[y][x] === 'miss') {
+            alert('You have already targeted this square!\nPlease pick another.');
         }
 
-        this.board[y][x] = this.board[y][x] ? 'hit' : 'miss';
+        this.board[y][x] = this.board[y][x].includes('ship') ? 'hits' : 'miss';
 
-        if (this.board[y][x] === 'hit') {
+        if (this.board[y][x] === 'hits') {
             this.hitShip(y, x);
         }
+
         // TODO: Game over logic - complete when GameController class implemented
         if (!this.ships.length) {
             this.isGameOver = true;
@@ -75,7 +106,7 @@ export class Gameboard {
     }
 
     hitShip(y, x) {
-        const shipToHit = this.ships.find(ship => ship.coordinates.find(([a, b]) => a === y && b === x));
+        const shipToHit = findShip(y, x);
         shipToHit.hit(y, x);
 
         if (shipToHit.isSunk()) {
@@ -84,7 +115,28 @@ export class Gameboard {
         }
     }
 
-    noShipsOfType() {
-        return this.shipLimits[Ship.shipName(this.currentShipSize)] === 0;
+    allShipsPlaced() {
+        return Object.values(this.shipLimits).every(count => count == 0);
+    }
+
+    shipsOfTypeRemaining(size) {
+        return this.shipLimits[Ship.shipName(size)];
+    }
+
+    findShip(y, x) {
+        return this.ships.find(ship => ship.coordinates.find(([a, b]) => a === y && b === x));
+    }
+
+    generateAIBoard() {
+        if (this.player.isAI) {
+            while (!this.allShipsPlaced()) {
+                const y = Math.floor(Math.random() * 10);
+                const x = Math.floor(Math.random() * 10);
+                const size = Math.floor(Math.random() * 4) + 2;
+                const orientation = ['horizontal', 'vertical'][Math.floor(Math.random() * 2)];
+
+                this.placeShip(y, x, size, orientation);
+            }
+        }
     }
 }

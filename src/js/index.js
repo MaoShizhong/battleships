@@ -1,54 +1,28 @@
 import '../css/style.css';
-import { Gameboard } from './game_board';
+import '../css/ship_borders.css';
+import { Game } from './game_controller';
+import { Placement } from './placement.js';
 import { UI } from './ui_controller';
 
 const placementBoard = document.querySelector('.board.placement');
+const deleteBtn = document.querySelector('#delete');
 const rotateBtn = document.querySelector('#rotate');
+const shipBtns = document.querySelectorAll('.ship-placement > button');
 
 // * initialise
-const boardOne = new Gameboard(10, 10, false);
-const boardTwo = new Gameboard(10, 10, false);
-UI.loadBoardCells(placementBoard, boardOne.width, boardOne.height);
+export let game = new Game(false, true);
 
-rotateBtn.addEventListener('click', () => boardOne.changeShipOrientation());
+deleteBtn.addEventListener('click', (deleteBtn) => Placement.toggleDeleteMode(deleteBtn));
+rotateBtn.addEventListener('click', () => Placement.changeDirection());
+shipBtns.forEach(btn => btn.addEventListener('click', () => Placement.changeShipSize(btn)));
+placementBoard.addEventListener('mouseover', (e) => Placement.highlightSquares(e));
+placementBoard.addEventListener('mouseout', (e) => Placement.removeHighlightOnMouseout(e));
+placementBoard.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+        const y = +e.target.dataset.y;
+        const x = +e.target.dataset.x;
 
-// TODO: REFACTOR THIS LATER
-placementBoard.addEventListener('mouseover', (e) => {
-    if (e.target.classList.contains('cell')) {
-        let cell = e.target;
-        const cellsToEdge = getCellsToEdge(+cell.id, boardOne.currentShipOrientation);
-        const isInBounds = boardOne.currentShipSize <= cellsToEdge;
-
-        cell.style.backgroundColor = isInBounds ? '#AA381E' : '#B4B4B4';
-
-        for (let i = 1; i < Math.min(boardOne.currentShipSize, cellsToEdge); i++) {
-            const cellShift = boardOne.currentShipOrientation === 'horizontal' ? 1 : boardOne.width;
-            for (let j = 0; j < cellShift; j++) {
-                cell = cell.nextElementSibling;
-            }
-            cell.style.backgroundColor = isInBounds ? '#AA381E' : '#B4B4B4';
-        }
-    }
+        if (Placement.inDeleteMode) game.playerOne.deleteShip(y, x);
+        else game.playerOne.placeShip(y, x);
+    };
 });
-placementBoard.addEventListener('mouseout', (e) => {
-    if (e.target.classList.contains('cell')) {
-        let cell = e.target;
-        cell.style.backgroundColor = null;
-        const cellsToEdge = getCellsToEdge(+cell.id, boardOne.currentShipOrientation);
-
-        for (let i = 1; i < Math.min(boardOne.currentShipSize, cellsToEdge); i++) {
-            const cellShift = boardOne.currentShipOrientation === 'horizontal' ? 1 : boardOne.width;
-            for (let j = 0; j < cellShift; j++) {
-                cell = cell.nextElementSibling;
-            }
-            cell.style.backgroundColor = null;
-        }
-    }
-});
-
-function getCellsToEdge(currentCell, orientation) {
-    if (orientation === 'horizontal') {
-        return boardOne.width - ((currentCell % boardOne.width) || 10) + 1;
-    }
-    return boardOne.height - ((Math.ceil(currentCell / 10) % boardOne.height) || 10) + 1;
-}
