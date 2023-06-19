@@ -7,9 +7,9 @@ export class Gameboard {
     static height = 10;
     static width = 10;
 
-    constructor(isAI = false, name = 'Foo') {
-        this.UIBoard = document.querySelector('#player-one');
-        this.player = new Player(isAI, name);
+    constructor(IDselector, isAI) {
+        this.UIBoard = document.querySelector(IDselector);
+        this.player = new Player(isAI);
         this.board = Array(Gameboard.height).fill().map(() => Array(Gameboard.width).fill('none'));
         this.ships = [];
         this.shipLimits = {
@@ -54,7 +54,7 @@ export class Gameboard {
             this.reduceShipCount(this.ships.at(-1).name);
 
             if (!this.player.isAI) {
-                UI.renderBoard(this.UIBoard, this.board);
+                UI.renderBoard(this.UIBoard, this.board, false);
 
                 if (this.allShipsPlaced()) UI.showGameStartBtn();
             }
@@ -71,7 +71,7 @@ export class Gameboard {
             this.increaseShipCount(ship.name, ship.coordinates.length);
             this.ships.splice(this.ships.indexOf(ship), 1);
 
-            UI.renderBoard(this.UIBoard, this.board);
+            UI.renderBoard(this.UIBoard, this.board, this.player.isAI);
 
             const startBtn = document.querySelector('#start-game');
             if (startBtn) startBtn.remove();
@@ -89,15 +89,17 @@ export class Gameboard {
     }
 
     receiveAttack(y, x) {
-        if (this.board[y][x] === 'hits' || this.board[y][x] === 'miss') {
-            alert('You have already targeted this square!\nPlease pick another.');
+        if (this.board[y][x].includes('hits') || this.board[y][x] === 'miss') {
+            return alert('You have already targeted this square!\nPlease pick another.');
         }
 
-        this.board[y][x] = this.board[y][x].includes('ship') ? 'hits' : 'miss';
+        this.board[y][x] = this.board[y][x].includes('ship') ? `hits ${this.board[y][x].slice(5)}` : 'miss';
 
-        if (this.board[y][x] === 'hits') {
+        if (this.board[y][x].includes('hits')) {
             this.hitShip(y, x);
         }
+
+        UI.renderBoard(this.UIBoard, this.board, true);
 
         // TODO: Game over logic - complete when GameController class implemented
         if (!this.ships.length) {
@@ -106,13 +108,22 @@ export class Gameboard {
     }
 
     hitShip(y, x) {
-        const shipToHit = findShip(y, x);
+        const shipToHit = this.findShip(y, x);
         shipToHit.hit(y, x);
 
         if (shipToHit.isSunk()) {
+            if (this.player.isAI) {
+                alert(`You sunk a ${Ship.shipName(shipToHit.coordinates.length)}!`);
+                this.updateAIShipSunkStatus(shipToHit.coordinates);
+            }
+
             const i = this.ships.indexOf(shipToHit);
             this.ships.splice(i, 1);
         }
+    }
+
+    updateAIShipSunkStatus(coordinates) {
+        coordinates.forEach(coordinate => this.board[coordinate[0]][coordinate[1]] += ' sunk');
     }
 
     allShipsPlaced() {

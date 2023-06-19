@@ -1,21 +1,67 @@
 import { Gameboard } from './game_board';
 import { Placement } from './placement';
-import { game } from './index';
+import { game, placeShip } from './index';
 
 export class UI {
-    static renderBoard(board, cells) {
+    static renderBoard(board, cells, isAI = true) {
         board.replaceChildren();
 
         for (let i = 0; i < Gameboard.width; i++) {
             for (let j = 0; j < Gameboard.height; j++) {
                 const square = document.createElement('button');
 
-                square.dataset.cell = cells[i][j];
+                if (!isAI) {
+                    square.dataset.cell = cells[i][j];
+                }
+                else if (isAI) {
+                    square.dataset.cell = cells && cells[i][j].includes('sunk') ? cells[i][j]
+                        : cells && /^hits|miss/.test(cells[i][j]) ? cells[i][j].slice(0, 4)
+                            : 'none';
+                    square.addEventListener('click', () => game.playerTwo.receiveAttack(i, j));
+                }
+
                 square.dataset.y = i;
                 square.dataset.x = j;
                 board.appendChild(square);
             }
         }
+    }
+
+    static renderPlayerTwoBoard() {
+        // * wrapper required to flex grow whilst child board maintains aspect ratio
+        // * for css transition purposes
+        const boardWrapper = document.createElement('div');
+        UI.addClasses([boardWrapper], 'flex', 'even', 'small');
+
+        const board = document.createElement('div');
+        board.id = 'player-two';
+        UI.addClasses([board], 'board');
+
+        const center = document.createElement('div');
+        center.id = 'cannon';
+        UI.addClasses([center], 'small');
+        center.appendChild(UI.createCentralDiv());
+
+        const playWindow = document.querySelector('#boards');
+        playWindow.appendChild(center);
+        playWindow.appendChild(boardWrapper).appendChild(board);
+        UI.renderBoard(board);
+
+        // * Omitting timeout prevents transition after .appendChild()
+        // * https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transitions/Using_CSS_transitions#:~:text=Note%3A%20Care,to%20transition%20to.
+        setTimeout(() => UI.removeClasses([boardWrapper, center], 'small'), 1);
+    }
+
+    static createCentralDiv() {
+        const frag = document.createDocumentFragment();
+        const cannon = document.createElement('img');
+        const playerTurn = document.createElement('h2');
+        playerTurn.textContent = 'Your move!';
+        cannon.src = '../images/cannon.png';
+
+        [playerTurn, cannon].forEach(el => frag.appendChild(el));
+
+        return frag;
     }
 
     static reduceShipCount(name, newCount) {
@@ -31,7 +77,7 @@ export class UI {
     static showGameStartBtn() {
         const startBtn = document.createElement('button');
         startBtn.id = 'start-game';
-        UI.addClasses(startBtn, 'grow', 'breathe');
+        UI.addClasses([startBtn], 'grow', 'breathe');
         startBtn.textContent = 'START';
         startBtn.addEventListener('click', () => game.startGame());
 
@@ -39,7 +85,39 @@ export class UI {
         main.insertBefore(startBtn, main.firstChild);
     }
 
-    static addClasses(el, ...classes) {
-        classes.forEach(arg => el.classList.add(arg));
+    static toggleShipBtns() {
+        const shipBtns = document.querySelector('.ships');
+        shipBtns.classList.toggle('invisible');
+
+        shipBtns.querySelectorAll('button').forEach(btn => btn.classList.toggle('grow'));
+    }
+
+    static toDualBoardView() {
+        document.querySelector('#start-game').remove();
+        UI.renderPlayerTwoBoard();
+    }
+
+    static disablePlacementMode() {
+        const placement = document.querySelector('.board.placement');
+
+        const eventListeners = {
+            'mouseover': Placement.highlightSquares,
+            'mouseout': Placement.removeHighlightOnMouseout,
+            'click': placeShip,
+        };
+
+        for (const listener in eventListeners) placement.removeEventListener(listener, eventListeners[listener]);
+    }
+
+    static addClasses(els, ...classes) {
+        els.forEach(el => {
+            classes.forEach(arg => el.classList.add(arg));
+        });
+    }
+
+    static removeClasses(els, ...classes) {
+        els.forEach(el => {
+            classes.forEach(arg => el.classList.remove(arg));
+        });
     }
 }

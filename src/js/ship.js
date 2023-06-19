@@ -6,11 +6,11 @@ export class Ship {
 
     hit(y, x) {
         const i = this.coordinates.findIndex(([a, b]) => a === y && b === x);
-        this.coordinates[i] = ['X', 'X'];
+        this.coordinates[i].push('hit');
     }
 
     isSunk() {
-        return this.coordinates.every(([a, b]) => a === 'X' && b === 'X');
+        return this.coordinates.every(coordinate => coordinate.length === 3);
     }
 
     static shipName(length) {

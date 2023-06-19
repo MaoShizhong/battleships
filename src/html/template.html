@@ -15,52 +15,54 @@
         </dialog>
 
         <img id="logo" src="../images/battleships.png" alt="logo (battleships in Chinese (Simplified))">
-        <h1>BATTLESHIPS</h1>
+        <h1>Battleships</h1>
 
-        <main class="flex center">
-            <div class="flex vert center stretch">
-                <div id="player-one" class="placement board"></div>
-
-                <div class="ships flex around">
-                    <div class="ship-placement flex vert center">
-                        <h4>Zhanxian<br>(1)</h4>
-                        <button class="transparent grow current" value="5">
-                            <img src="../images/zhanxian.png" alt="5-ship">
-                        </button>
-                        <p>5 x 1</p>
-                    </div>
-                    <div class="ship-placement flex vert center">
-                        <h4>Haihu<br>(1)</h4>
-                        <button class="transparent grow" value="4">
-                            <img src="../images/haihu.png" alt="4-ship">
-                        </button>
-                        <p>4 x 1</p>
-                    </div>
-                    <div>
-                        <button id="delete" class="transparent grow">
-                            <img src="../images/delete.png" alt="delete ship">
-                        </button>
-                        <button id="rotate" class="transparent grow">
-                            <img src="../images/rotate.png" alt="rotate ship">
-                            <h2>H</h2>
-                        </button>
-                    </div>
-                    <div class="ship-placement flex vert center">
-                        <h4>Mengchong<br>(2)</h4>
-                        <button class="transparent grow" value="3">
-                            <img src="../images/mengchong.png" alt="3-ship">
-                        </button>
-                        <p>3 x 1</p>
-                    </div>
-                    <div class="ship-placement flex vert center">
-                        <h4>Yuting<br>(2)</h4>
-                        <button class="transparent grow" value="2">
-                            <img src="../images/yuting.png" alt="2-ship">
-                        </button>
-                        <p>2 x 1</p>
-                    </div>
-
+        <main class="flex vert center stretch">
+            <div id="boards" class="flex">
+                <div class="flex even">
+                    <div id="player-one" class="placement board"></div>
                 </div>
+            </div>
+
+            <div class="ships flex even">
+                <div class="ship-placement flex vert center">
+                    <h4>Zhanxian<br>(1)</h4>
+                    <button class="transparent grow current" value="5">
+                        <img src="../images/zhanxian.png" alt="5-ship">
+                    </button>
+                    <p>5 x 1</p>
+                </div>
+                <div class="ship-placement flex vert center">
+                    <h4>Haihu<br>(1)</h4>
+                    <button class="transparent grow" value="4">
+                        <img src="../images/haihu.png" alt="4-ship">
+                    </button>
+                    <p>4 x 1</p>
+                </div>
+                <div>
+                    <button id="delete" class="transparent grow">
+                        <img src="../images/delete.png" alt="delete ship">
+                    </button>
+                    <button id="rotate" class="transparent grow">
+                        <img src="../images/rotate.png" alt="rotate ship">
+                        <h2>H</h2>
+                    </button>
+                </div>
+                <div class="ship-placement flex vert center">
+                    <h4>Mengchong<br>(2)</h4>
+                    <button class="transparent grow" value="3">
+                        <img src="../images/mengchong.png" alt="3-ship">
+                    </button>
+                    <p>3 x 1</p>
+                </div>
+                <div class="ship-placement flex vert center">
+                    <h4>Yuting<br>(2)</h4>
+                    <button class="transparent grow" value="2">
+                        <img src="../images/yuting.png" alt="2-ship">
+                    </button>
+                    <p>2 x 1</p>
+                </div>
+
             </div>
         </main>
 

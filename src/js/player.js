@@ -1,6 +1,5 @@
 export class Player {
-    constructor(isAI, name) {
+    constructor(isAI) {
         this.isAI = isAI;
-        this.name = name;
     }
 }
