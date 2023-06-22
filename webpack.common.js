@@ -19,7 +19,28 @@ module.exports = {
         rules: [
             {
                 test: /\.css$/i,
-                use: ['style-loader', 'css-loader', 'postcss-loader'],
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: { importLoaders: 1 },
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            postcssOptions: {
+                                plugins: [
+                                    [require('postcss-nested')],
+                                    ['css-has-pseudo',],
+                                ]
+                            }
+                        }
+                    },
+                ],
+            },
+            {
+                test: /\.html$/i,
+                use: 'html-loader',
             },
             {
                 test: /\.(jpg|png)$/i,

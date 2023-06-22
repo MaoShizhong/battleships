@@ -15,6 +15,7 @@
 
 * {
     margin: 0;
+    user-select: none;
 }
 
 body {
@@ -66,7 +67,7 @@ main {
     & > div {
         overflow: hidden;
 
-        &:not(:has(#player-one)) {
+        &:not(.player-one) {
             flex: 0.00001;
 
             &:has(> img) {
@@ -93,6 +94,7 @@ main {
 
     & > div:has(> .board) {
         flex: 3 0 0;
+        position: relative;
     }
 
     & .small {
@@ -100,31 +102,50 @@ main {
     }
 }
 
-#cannon {
+.cannon {
     font-family: 'Shanghai';
     text-align: center;
+
+    & > h2 {
+        @keyframes blink {
+            to { opacity: 1; }
+        }
+    }
 
     & > img {
         width: 85%;
     }
 }
+
+.attack-result {
+    position: fixed;
+    //top: 26svh;
+    opacity: 0;
+    font: bold 3rem 'Shanghai';
+    animation: 1800ms cubic-bezier(.35,.02,.27,1) bounce;
+
+    @keyframes bounce {
+        50% { transform: translateY(-3rem); opacity: 1; }
+    }
+}
+
 .board {
     aspect-ratio: 1 / 1;
     border: 1rem double black;
     display: grid;
     grid-template-columns: repeat(var(--columns), 1fr);
     grid-template-rows: repeat(var(--rows), 1fr);
-    width: min(55vw, 35rem);
+    width: min(52vw, 30rem);
     margin-block: 2.2rem;
+
+    &.player-two > button:hover:not(:disabled) {
+        background-color: var(--oob);
+    }
 
     & button {
         border: 1px solid black;
         background-color: #fdead2;
         cursor: crosshair;
-
-        &:hover:not([data-cell]) {
-            background-color: var(--oob); 
-        }
     }
 }
 
@@ -150,9 +171,25 @@ main {
     }
 }
 
+.ball {
+    background-color: black;
+    border-radius: 50%;
+    height: 7rem;
+    width: 7rem;
+    position: absolute;
+    top: -8rem;
+    z-index: 100;
+}
+
 button {
     border: none;
     cursor: pointer;
+}
+
+#winner {
+    cursor: pointer;
+    font: bold 5rem 'Shanghai';
+    text-align: center;
 }
 
 .current {
@@ -212,10 +249,10 @@ button {
 
 .breathe {
     animation: breathe 2.4s linear infinite;
-}
 
-@keyframes breathe {
-    0% { opacity: 0.5; }
-    50% { opacity: 1; }
-    100% { opacity: 0.5; }
+    @keyframes breathe {
+        0% { opacity: 0.5; }
+        50% { opacity: 1; }
+        100% { opacity: 0.5; }
+    }
 }

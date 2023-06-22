@@ -1,13 +1,13 @@
 import { Gameboard } from './game_board';
 import { Placement } from './placement';
-import { game, placeShip } from './index';
+import { game } from './index';
 
 export class UI {
     static renderBoard(board, cells, isAI = true) {
         board.replaceChildren();
 
-        for (let i = 0; i < Gameboard.width; i++) {
-            for (let j = 0; j < Gameboard.height; j++) {
+        for (let i = 0; i < Gameboard.WIDTH; i++) {
+            for (let j = 0; j < Gameboard.HEIGHT; j++) {
                 const square = document.createElement('button');
 
                 if (!isAI) {
@@ -28,18 +28,16 @@ export class UI {
     }
 
     static renderPlayerTwoBoard() {
-        // * wrapper required to flex grow whilst child board maintains aspect ratio
-        // * for css transition purposes
+        // wrapper required to flex grow whilst child board maintains aspect ratio
+        // for css transition purposes
         const boardWrapper = document.createElement('div');
         UI.addClasses([boardWrapper], 'flex', 'even', 'small');
 
         const board = document.createElement('div');
-        board.id = 'player-two';
-        UI.addClasses([board], 'board');
+        UI.addClasses([board], 'board', 'player-two');
 
         const center = document.createElement('div');
-        center.id = 'cannon';
-        UI.addClasses([center], 'small');
+        UI.addClasses([center], 'small', 'cannon');
         center.appendChild(UI.createCentralDiv());
 
         const playWindow = document.querySelector('#boards');
@@ -47,8 +45,8 @@ export class UI {
         playWindow.appendChild(boardWrapper).appendChild(board);
         UI.renderBoard(board);
 
-        // * Omitting timeout prevents transition after .appendChild()
-        // * https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transitions/Using_CSS_transitions#:~:text=Note%3A%20Care,to%20transition%20to.
+        // Omitting timeout prevents transition after .appendChild()
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transitions/Using_CSS_transitions#:~:text=Note%3A%20Care,to%20transition%20to.
         setTimeout(() => UI.removeClasses([boardWrapper, center], 'small'), 1);
     }
 
@@ -56,7 +54,7 @@ export class UI {
         const frag = document.createDocumentFragment();
         const cannon = document.createElement('img');
         const playerTurn = document.createElement('h2');
-        playerTurn.textContent = 'Your move!';
+        playerTurn.textContent = 'Your move';
         cannon.src = '../images/cannon.png';
 
         [playerTurn, cannon].forEach(el => frag.appendChild(el));
@@ -95,6 +93,9 @@ export class UI {
     static toDualBoardView() {
         document.querySelector('#start-game').remove();
         UI.renderPlayerTwoBoard();
+
+        // fresh board
+        UI.renderBoard(game.playerOne.UIBoard, game.playerOne.board);
     }
 
     static disablePlacementMode() {
@@ -103,10 +104,28 @@ export class UI {
         const eventListeners = {
             'mouseover': Placement.highlightSquares,
             'mouseout': Placement.removeHighlightOnMouseout,
-            'click': placeShip,
+            'click': Placement.placeShip,
         };
 
         for (const listener in eventListeners) placement.removeEventListener(listener, eventListeners[listener]);
+    }
+
+    static clearMain() {
+        document.querySelector('main').replaceChildren();
+    }
+
+    static switchCurrentPlayerIndicator(currentIsAI) {
+        const indicator = document.querySelector('.cannon');
+
+        indicator.firstChild.style.opacity = currentIsAI ? 0.4 : 1;
+        indicator.firstChild.style.animation = currentIsAI ? '600ms linear alternate infinite blink' : null;
+        indicator.firstChild.textContent = currentIsAI ? 'CPU\'s move' : 'Your move';
+        indicator.lastChild.style.transform = `scaleX(${currentIsAI ? -1 : 1})`;
+    }
+
+    static disableAllButtons(toDisable) {
+        const allBtns = document.querySelectorAll('button');
+        allBtns.forEach(btn => btn.disabled = toDisable);
     }
 
     static addClasses(els, ...classes) {

@@ -2,31 +2,30 @@ import { Player } from './player';
 import { Ship } from './ship';
 import { UI } from './ui_controller';
 import { Placement } from './placement.js';
+import { Animator } from './animator';
+import { game } from './index';
 
 export class Gameboard {
-    static height = 10;
-    static width = 10;
+    static HEIGHT = 10;
+    static WIDTH = 10;
 
-    constructor(IDselector, isAI) {
-        this.UIBoard = document.querySelector(IDselector);
-        this.player = new Player(isAI);
-        this.board = Array(Gameboard.height).fill().map(() => Array(Gameboard.width).fill('none'));
+    constructor(isAI, selector) {
+        this.UIBoard = document.querySelector(selector);
+        this.player = new Player(isAI, selector);
+        this.board = Array(Gameboard.HEIGHT).fill().map(() => Array(Gameboard.WIDTH).fill('none'));
         this.ships = [];
         this.shipLimits = {
             'Zhanxian': 1,
             'Haihu': 1,
             'Mengchong': 2,
-            'Yuting': 2,
+            'Yuting': 3,
         };
-
-        // TODO: replace when game logic implemented
-        this.isGameOver = false;
     }
 
     canFitShip(y, x, size, orientation) {
         if (
-            (orientation === 'horizontal' && x + size > Gameboard.width)
-            || (orientation === 'vertical' && y + size > Gameboard.height)
+            (orientation === 'horizontal' && x + size > Gameboard.WIDTH)
+            || (orientation === 'vertical' && y + size > Gameboard.HEIGHT)
         ) return false;
 
         for (let i = 0; i < size; i++) {
@@ -72,6 +71,7 @@ export class Gameboard {
             this.ships.splice(this.ships.indexOf(ship), 1);
 
             UI.renderBoard(this.UIBoard, this.board, this.player.isAI);
+            Placement.toggleDeleteMode();
 
             const startBtn = document.querySelector('#start-game');
             if (startBtn) startBtn.remove();
@@ -93,18 +93,35 @@ export class Gameboard {
             return alert('You have already targeted this square!\nPlease pick another.');
         }
 
-        this.board[y][x] = this.board[y][x].includes('ship') ? `hits ${this.board[y][x].slice(5)}` : 'miss';
+        UI.disableAllButtons(true);
 
-        if (this.board[y][x].includes('hits')) {
-            this.hitShip(y, x);
-        }
+        Animator.fireCannonball(this.player, this.UIBoard, y, x);
 
-        UI.renderBoard(this.UIBoard, this.board, true);
+        setTimeout(() => {
+            this.board[y][x] = this.board[y][x].includes('ship') ? `hits ${this.board[y][x].slice(5)}` : 'miss';
 
-        // TODO: Game over logic - complete when GameController class implemented
-        if (!this.ships.length) {
-            this.isGameOver = true;
-        }
+            if (this.board[y][x].includes('hits')) {
+                this.hitShip(y, x);
+            }
+            else {
+                Animator.showAttackText(this.UIBoard, 'Miss!');
+            }
+
+            UI.renderBoard(this.UIBoard, this.board, true);
+
+            // ? UI.renderBoard creates new undisabled buttons
+            // ? find a way to only need to call disable once
+            // ? cannot call in UI.renderBoard due to initial load
+            UI.disableAllButtons(true);
+
+            // delay for hit/miss/sunk animation
+            setTimeout(() => {
+                if (!this.ships.length) {
+                    return game.showWinner(game.activePlayer.player.name);
+                }
+                game.switchActivePlayer();
+            }, Animator.RESULT_DURATION);
+        }, Animator.CANNONBALL_DURATION);
     }
 
     hitShip(y, x) {
@@ -112,13 +129,15 @@ export class Gameboard {
         shipToHit.hit(y, x);
 
         if (shipToHit.isSunk()) {
-            if (this.player.isAI) {
-                alert(`You sunk a ${Ship.shipName(shipToHit.coordinates.length)}!`);
-                this.updateAIShipSunkStatus(shipToHit.coordinates);
-            }
+            Animator.showAttackText(this.UIBoard, `${shipToHit.name} sunk!`);
+
+            this.updateAIShipSunkStatus(shipToHit.coordinates);
 
             const i = this.ships.indexOf(shipToHit);
             this.ships.splice(i, 1);
+        }
+        else {
+            Animator.showAttackText(this.UIBoard, 'Hit!');
         }
     }
 
