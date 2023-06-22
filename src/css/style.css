@@ -22,7 +22,7 @@ body {
     background-color: #fce7cb;
     background-image: url("https://www.transparenttextures.com/patterns/paper-1.png");
     font-family: 'Sora', sans-serif;
-    min-height: calc(100svh - 8px);
+    height: calc(100svh - 8px);
 }
 
 #logo {
@@ -37,6 +37,8 @@ body {
 
 main {
     flex: 1;
+    /* margin, logo, title, margin bottom */
+    height: calc(100svh - 16px - 5rem - 54px - 2rem);
     position: relative;
 
     & > div {
@@ -58,6 +60,7 @@ main {
 #boards {
     align-items: center;
     gap: 1rem;
+    height: 100%;
     width: 100%;
 
     & *:not(button) {
@@ -119,7 +122,6 @@ main {
 
 .attack-result {
     position: fixed;
-    //top: 26svh;
     opacity: 0;
     font: bold 3rem 'Shanghai';
     animation: 1800ms cubic-bezier(.35,.02,.27,1) bounce;
@@ -135,8 +137,11 @@ main {
     display: grid;
     grid-template-columns: repeat(var(--columns), 1fr);
     grid-template-rows: repeat(var(--rows), 1fr);
-    width: min(52vw, 30rem);
-    margin-block: 2.2rem;
+    width: min(58vw, 30rem);
+
+    &.placement {
+        width: min(75vw, 30rem);
+    }
 
     &.player-two > button:hover:not(:disabled) {
         background-color: var(--oob);
@@ -150,14 +155,19 @@ main {
 }
 
 .ships {
+    margin-bottom: 2rem;
     text-align: center;
-    width: 50%;
+    width: min(95vw, 900px);
     
     & > .ship-placement {
         flex: 3;
 
         & > button {
             margin-block: 0.8rem;
+
+            & > img {
+                width: 100%;
+            }
         }
     }
 
@@ -166,7 +176,7 @@ main {
 
         &  img {
             margin-block: 0.2rem;
-            width: 2.5rem;
+            width: min(2.5rem, 140%);
         }
     }
 }
@@ -254,5 +264,38 @@ button {
         0% { opacity: 0.5; }
         50% { opacity: 1; }
         100% { opacity: 0.5; }
+    }
+}
+
+@media (max-width: 740px) {
+    #logo {
+        margin: 1rem 0 0;
+        height: 3.5rem;
+    }
+    
+    #logo + h1 {
+        font-family: 'Shanghai';
+        font-size: 2rem;
+    }
+
+    #boards.mob-vert {
+        flex-direction: column;
+        padding-top: 1.4rem;
+
+        & > div {
+            overflow: unset;
+        }
+
+        & img {
+            max-height: 120px;
+        }
+    }
+
+    .invisible {
+        display: none;
+    }
+
+    @keyframes bounce {
+        50% { transform: translateY(-1rem); opacity: 1; }
     }
 }

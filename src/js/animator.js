@@ -49,7 +49,7 @@ export class Animator {
         const h1 = document.createElement('h1');
         h1.textContent = result;
         h1.style.top =
-            `${(attackedBoard.parentNode.getBoundingClientRect().top + window.scrollY) / window.innerHeight * 100}%`;
+            `calc(${(attackedBoard.parentNode.getBoundingClientRect().top) / window.innerHeight * 100}% - 1rem)`;
         UI.addClasses([h1], 'attack-result');
 
         attackedBoard.parentNode.appendChild(h1);

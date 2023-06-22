@@ -7,4 +7,15 @@ module.exports = merge(common, {
     devServer: {
         static: './src',
     },
+    module: {
+        rules: [
+            {
+                test: /\.(jpg|png)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'images/[name]-[hash][ext]',
+                },
+            },
+        ]
+    }
 });

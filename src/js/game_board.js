@@ -107,7 +107,7 @@ export class Gameboard {
                 Animator.showAttackText(this.UIBoard, 'Miss!');
             }
 
-            UI.renderBoard(this.UIBoard, this.board, true);
+            UI.renderBoard(this.UIBoard, this.board, this.player.isAI);
 
             // ? UI.renderBoard creates new undisabled buttons
             // ? find a way to only need to call disable once

@@ -28,7 +28,7 @@ export class Player {
 
     honeInAttack(opponent) {
         const squares = document.querySelectorAll(`${opponent.player.selector} > button`);
-        const squaresHitNotSunk = [...squares].filter(square => square.dataset.cell === 'hits');
+        const squaresHitNotSunk = [...squares].filter(square => /^hits(?!.*sunk$)/.test(square.dataset.cell));
 
         // prevents selecting squares with no legal surrounding moves (e.g. unsunk corners)
         let squareHitNotSunk, y, x, attackOptions;

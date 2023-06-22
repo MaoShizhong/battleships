@@ -1,6 +1,7 @@
 import { Gameboard } from './game_board';
 import { Placement } from './placement';
 import { game } from './index';
+import Cannon from '../images/cannon.png';
 
 export class UI {
     static renderBoard(board, cells, isAI = true) {
@@ -41,6 +42,7 @@ export class UI {
         center.appendChild(UI.createCentralDiv());
 
         const playWindow = document.querySelector('#boards');
+        UI.addClasses([playWindow], 'mob-vert');
         playWindow.appendChild(center);
         playWindow.appendChild(boardWrapper).appendChild(board);
         UI.renderBoard(board);
@@ -52,10 +54,10 @@ export class UI {
 
     static createCentralDiv() {
         const frag = document.createDocumentFragment();
-        const cannon = document.createElement('img');
+        const cannon = new Image();
         const playerTurn = document.createElement('h2');
         playerTurn.textContent = 'Your move';
-        cannon.src = '../images/cannon.png';
+        cannon.src = Cannon;
 
         [playerTurn, cannon].forEach(el => frag.appendChild(el));
 
@@ -95,11 +97,12 @@ export class UI {
         UI.renderPlayerTwoBoard();
 
         // fresh board
-        UI.renderBoard(game.playerOne.UIBoard, game.playerOne.board);
+        UI.renderBoard(game.playerOne.UIBoard, game.playerOne.board, false);
     }
 
     static disablePlacementMode() {
         const placement = document.querySelector('.board.placement');
+        UI.removeClasses([placement], 'placement');
 
         const eventListeners = {
             'mouseover': Placement.highlightSquares,
