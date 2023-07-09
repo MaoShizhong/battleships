@@ -1,46 +1,45 @@
-[data-cell~="head"][data-cell~="vertical"],
-[data-cell~="head"][data-cell~="horizontal"],
-[data-cell~="middle"][data-cell~="vertical"],
-[data-cell~="middle"][data-cell~="horizontal"],
-[data-cell~="end"][data-cell~="vertical"],
-[data-cell~="end"][data-cell~="horizontal"],
-[data-cell~="ship"] {
+[data-cell~='head'][data-cell~='vertical'],
+[data-cell~='head'][data-cell~='horizontal'],
+[data-cell~='middle'][data-cell~='vertical'],
+[data-cell~='middle'][data-cell~='horizontal'],
+[data-cell~='end'][data-cell~='vertical'],
+[data-cell~='end'][data-cell~='horizontal'],
+[data-cell~='ship'] {
     background-color: var(--c-red);
     border-width: 2px;
 }
 
-
-[data-cell~="head"][data-cell~="vertical"] {
+[data-cell~='head'][data-cell~='vertical'] {
     border-bottom: none;
 }
 
-[data-cell~="head"][data-cell~="horizontal"] {
+[data-cell~='head'][data-cell~='horizontal'] {
     border-right: none;
 }
 
-[data-cell~="middle"][data-cell~="vertical"] {
+[data-cell~='middle'][data-cell~='vertical'] {
     border-block: none;
 }
 
-[data-cell~="middle"][data-cell~="horizontal"] {
+[data-cell~='middle'][data-cell~='horizontal'] {
     border-inline: none;
 }
 
-[data-cell~="end"][data-cell~="vertical"] {
+[data-cell~='end'][data-cell~='vertical'] {
     border-top: none;
 }
 
-[data-cell~="end"][data-cell~="horizontal"] {
+[data-cell~='end'][data-cell~='horizontal'] {
     border-left: none;
 }
 
-[data-cell~="hits"] {
+[data-cell~='hits'] {
     background-color: var(--c-red) !important;
     background-image: url(../images/hits.png);
     background-size: cover;
 }
 
-[data-cell~="miss"] {
+[data-cell~='miss'] {
     background-image: url(../images/miss.png);
     background-size: cover;
 }

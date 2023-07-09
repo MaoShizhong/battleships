@@ -17,7 +17,7 @@ export let game = new Game();
 
 deleteBtn.addEventListener('click', Placement.toggleDeleteMode);
 rotateBtn.addEventListener('click', Placement.changeDirection);
-shipBtns.forEach(btn => btn.addEventListener('click', Placement.changeShipSize));
+shipBtns.forEach((btn) => btn.addEventListener('click', Placement.changeShipSize));
 placementBoard.addEventListener('mouseover', Placement.highlightSquares);
 placementBoard.addEventListener('mouseout', Placement.removeHighlightOnMouseout);
 placementBoard.addEventListener('click', Placement.placeShip);

@@ -28,8 +28,7 @@ export class Game {
 
         if (this.activePlayer.player.isAI) {
             this.activePlayer.player.attackOpponent(this.otherPlayer);
-        }
-        else {
+        } else {
             UI.disableAllButtons(false);
         }
     }

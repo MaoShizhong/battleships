@@ -12,21 +12,25 @@ export class Gameboard {
     constructor(isAI, selector) {
         this.UIBoard = document.querySelector(selector);
         this.player = new Player(isAI, selector);
-        this.board = Array(Gameboard.HEIGHT).fill().map(() => Array(Gameboard.WIDTH).fill('none'));
+        this.board = Array(Gameboard.HEIGHT)
+            .fill()
+            .map(() => Array(Gameboard.WIDTH).fill('none'));
         this.ships = [];
         this.shipLimits = {
-            'Zhanxian': 1,
-            'Haihu': 1,
-            'Mengchong': 2,
-            'Yuting': 3,
+            Zhanxian: 1,
+            Haihu: 1,
+            Mengchong: 2,
+            Yuting: 3,
         };
     }
 
     canFitShip(y, x, size, orientation) {
         if (
-            (orientation === 'horizontal' && x + size > Gameboard.WIDTH)
-            || (orientation === 'vertical' && y + size > Gameboard.HEIGHT)
-        ) return false;
+            (orientation === 'horizontal' && x + size > Gameboard.WIDTH) ||
+            (orientation === 'vertical' && y + size > Gameboard.HEIGHT)
+        ) {
+            return false;
+        }
 
         for (let i = 0; i < size; i++) {
             if (this.board[y][x].includes('ship')) return false;
@@ -36,7 +40,12 @@ export class Gameboard {
         return true;
     }
 
-    placeShip(y, x, size = Placement.currentShipSize, orientation = Placement.currentShipOrientation) {
+    placeShip(
+        y,
+        x,
+        size = Placement.currentShipSize,
+        orientation = Placement.currentShipOrientation
+    ) {
         if (this.shipsOfTypeRemaining(size) && this.canFitShip(y, x, size, orientation)) {
             const shipCoordinates = [];
 
@@ -62,8 +71,9 @@ export class Gameboard {
 
     deleteShip(y, x) {
         const ship = this.findShip(y, x);
+
         if (ship) {
-            ship.coordinates.forEach(coordinate => {
+            ship.coordinates.forEach((coordinate) => {
                 this.board[coordinate[0]][coordinate[1]] = 'none';
             });
 
@@ -98,12 +108,13 @@ export class Gameboard {
         Animator.fireCannonball(this.player, this.UIBoard, y, x);
 
         setTimeout(() => {
-            this.board[y][x] = this.board[y][x].includes('ship') ? `hits ${this.board[y][x].slice(5)}` : 'miss';
+            this.board[y][x] = this.board[y][x].includes('ship')
+                ? `hits ${this.board[y][x].slice(5)}`
+                : 'miss';
 
             if (this.board[y][x].includes('hits')) {
                 this.hitShip(y, x);
-            }
-            else {
+            } else {
                 Animator.showAttackText(this.UIBoard, 'Miss!');
             }
 
@@ -128,25 +139,24 @@ export class Gameboard {
         const shipToHit = this.findShip(y, x);
         shipToHit.hit(y, x);
 
-        if (shipToHit.isSunk()) {
+        if (shipToHit.isSunk) {
             Animator.showAttackText(this.UIBoard, `${shipToHit.name} sunk!`);
 
             this.updateAIShipSunkStatus(shipToHit.coordinates);
 
             const i = this.ships.indexOf(shipToHit);
             this.ships.splice(i, 1);
-        }
-        else {
+        } else {
             Animator.showAttackText(this.UIBoard, 'Hit!');
         }
     }
 
     updateAIShipSunkStatus(coordinates) {
-        coordinates.forEach(coordinate => this.board[coordinate[0]][coordinate[1]] += ' sunk');
+        coordinates.forEach((coordinate) => (this.board[coordinate[0]][coordinate[1]] += ' sunk'));
     }
 
     allShipsPlaced() {
-        return Object.values(this.shipLimits).every(count => count == 0);
+        return Object.values(this.shipLimits).every((count) => count == 0);
     }
 
     shipsOfTypeRemaining(size) {
@@ -154,7 +164,7 @@ export class Gameboard {
     }
 
     findShip(y, x) {
-        return this.ships.find(ship => ship.coordinates.find(([a, b]) => a === y && b === x));
+        return this.ships.find((ship) => ship.coordinates.find(([a, b]) => a === y && b === x));
     }
 
     generateAIBoard() {

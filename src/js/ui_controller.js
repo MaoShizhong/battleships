@@ -13,10 +13,12 @@ export class UI {
 
                 if (!isAI) {
                     square.dataset.cell = cells[i][j];
-                }
-                else if (isAI) {
-                    square.dataset.cell = cells && cells[i][j].includes('sunk') ? cells[i][j]
-                        : cells && /^hits|miss/.test(cells[i][j]) ? cells[i][j].slice(0, 4)
+                } else if (isAI) {
+                    square.dataset.cell =
+                        cells && cells[i][j].includes('sunk')
+                            ? cells[i][j]
+                            : cells && /^hits|miss/.test(cells[i][j])
+                            ? cells[i][j].slice(0, 4)
                             : 'none';
                     square.addEventListener('click', () => game.playerTwo.receiveAttack(i, j));
                 }
@@ -59,7 +61,7 @@ export class UI {
         playerTurn.textContent = 'Your move';
         cannon.src = Cannon;
 
-        [playerTurn, cannon].forEach(el => frag.appendChild(el));
+        [playerTurn, cannon].forEach((el) => frag.appendChild(el));
 
         return frag;
     }
@@ -89,7 +91,7 @@ export class UI {
         const shipBtns = document.querySelector('.ships');
         shipBtns.classList.toggle('invisible');
 
-        shipBtns.querySelectorAll('button').forEach(btn => btn.classList.toggle('grow'));
+        shipBtns.querySelectorAll('button').forEach((btn) => btn.classList.toggle('grow'));
     }
 
     static toDualBoardView() {
@@ -105,9 +107,9 @@ export class UI {
         UI.removeClasses([placement], 'placement');
 
         const eventListeners = {
-            'mouseover': Placement.highlightSquares,
-            'mouseout': Placement.removeHighlightOnMouseout,
-            'click': Placement.placeShip,
+            mouseover: Placement.highlightSquares,
+            mouseout: Placement.removeHighlightOnMouseout,
+            click: Placement.placeShip,
         };
 
         for (const listener in eventListeners) placement.removeEventListener(listener, eventListeners[listener]);
@@ -122,24 +124,24 @@ export class UI {
 
         indicator.firstChild.style.opacity = currentIsAI ? 0.4 : 1;
         indicator.firstChild.style.animation = currentIsAI ? '600ms linear alternate infinite blink' : null;
-        indicator.firstChild.textContent = currentIsAI ? 'CPU\'s move' : 'Your move';
+        indicator.firstChild.textContent = currentIsAI ? "CPU's move" : 'Your move';
         indicator.lastChild.style.transform = `scaleX(${currentIsAI ? -1 : 1})`;
     }
 
     static disableAllButtons(toDisable) {
         const allBtns = document.querySelectorAll('button');
-        allBtns.forEach(btn => btn.disabled = toDisable);
+        allBtns.forEach((btn) => (btn.disabled = toDisable));
     }
 
     static addClasses(els, ...classes) {
-        els.forEach(el => {
-            classes.forEach(arg => el.classList.add(arg));
+        els.forEach((el) => {
+            classes.forEach((arg) => el.classList.add(arg));
         });
     }
 
     static removeClasses(els, ...classes) {
-        els.forEach(el => {
-            classes.forEach(arg => el.classList.remove(arg));
+        els.forEach((el) => {
+            classes.forEach((arg) => el.classList.remove(arg));
         });
     }
 }

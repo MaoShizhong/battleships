@@ -9,8 +9,8 @@ export class Ship {
         this.coordinates[i].push('hit');
     }
 
-    isSunk() {
-        return this.coordinates.every(coordinate => coordinate.length === 3);
+    get isSunk() {
+        return this.coordinates.every((coordinate) => coordinate.length === 3);
     }
 
     static shipName(length) {

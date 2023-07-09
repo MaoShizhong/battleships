@@ -14,7 +14,8 @@ export class Placement {
     }
 
     static changeDirection() {
-        Placement.currentShipOrientation = Placement.currentShipOrientation === 'horizontal' ? 'vertical' : 'horizontal';
+        Placement.currentShipOrientation =
+            Placement.currentShipOrientation === 'horizontal' ? 'vertical' : 'horizontal';
 
         const direction = document.querySelector('#rotate > h2');
         direction.textContent = Placement.currentShipOrientation === 'horizontal' ? 'H' : 'V';
@@ -75,7 +76,7 @@ export class Placement {
 
             if (Placement.inDeleteMode) game.playerOne.deleteShip(y, x);
             else game.playerOne.placeShip(y, x);
-        };
+        }
     }
 
     static toggleDeleteMode() {
@@ -85,7 +86,7 @@ export class Placement {
         deleteBtn.classList.toggle('current');
 
         const btnsToDisable = document.querySelectorAll('.ships button:not(#delete)');
-        btnsToDisable.forEach(btn => {
+        btnsToDisable.forEach((btn) => {
             btn.disabled = !btn.disabled;
             btn.classList.toggle('disable');
         });

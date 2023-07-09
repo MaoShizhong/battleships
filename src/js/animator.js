@@ -40,16 +40,17 @@ export class Animator {
     static getSquarePosition(board, y, x) {
         const square = board.querySelector(`[data-y="${y}"][data-x="${x}"]`);
         return {
-            top: (square.getBoundingClientRect().top + window.scrollY) / window.innerHeight * 100,
-            left: (square.getBoundingClientRect().left + window.scrollX) / window.innerWidth * 100,
+            top: ((square.getBoundingClientRect().top + window.scrollY) / window.innerHeight) * 100,
+            left: ((square.getBoundingClientRect().left + window.scrollX) / window.innerWidth) * 100,
         };
     }
 
     static showAttackText(attackedBoard, result) {
         const h1 = document.createElement('h1');
         h1.textContent = result;
-        h1.style.top =
-            `calc(${(attackedBoard.parentNode.getBoundingClientRect().top) / window.innerHeight * 100}% - 1rem)`;
+        h1.style.top = `calc(${
+            (attackedBoard.parentNode.getBoundingClientRect().top / window.innerHeight) * 100
+        }% - 1rem)`;
         UI.addClasses([h1], 'attack-result');
 
         attackedBoard.parentNode.appendChild(h1);

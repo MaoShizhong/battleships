@@ -2,14 +2,13 @@
 
 @font-face {
     font-family: 'Shanghai';
-    src: url('../fonts/shanghai.woff2') format('woff2'),
-         url('../fonts/shanghai.ttf') format('truetype');
+    src: url('../fonts/shanghai.woff2') format('woff2'), url('../fonts/shanghai.ttf') format('truetype');
 }
 
 :root {
     --columns: 10;
     --rows: 10;
-    --c-red: #AA381E;
+    --c-red: #aa381e;
     --oob: #dbba9a;
 }
 
@@ -20,25 +19,31 @@
 
 body {
     background-color: #fce7cb;
-    background-image: url("https://www.transparenttextures.com/patterns/paper-1.png");
+    background-image: url('https://www.transparenttextures.com/patterns/paper-1.png');
     font-family: 'Sora', sans-serif;
     height: calc(100svh - 8px);
 }
 
-#logo {
-    margin: 1rem 0 0;
-    height: 5rem;
-}
+.logo {
+    margin-top: 0.5rem;
+    flex-shrink: 1;
+    height: clamp(3rem, 15svh, 7.8rem);
+    text-align: center;
 
-#logo + h1 {
-    font-family: 'Shanghai';
-    font-size: 2.8rem;
+    & #logo {
+        margin: 0;
+        height: 46%;
+    }
+
+    & h1 {
+        font-family: 'Shanghai';
+        font-size: min(2.8rem, 5svh);
+    }
 }
 
 main {
     flex: 1;
     /* margin, logo, title, margin bottom */
-    height: calc(100svh - 16px - 5rem - 54px - 2rem);
     position: relative;
 
     & > div {
@@ -54,7 +59,7 @@ main {
     background-color: transparent;
     font: bold 2rem 'Shanghai';
     position: absolute;
-    top: 1rem;
+    top: 0;
 }
 
 #boards {
@@ -111,7 +116,9 @@ main {
 
     & > h2 {
         @keyframes blink {
-            to { opacity: 1; }
+            to {
+                opacity: 1;
+            }
         }
     }
 
@@ -124,10 +131,13 @@ main {
     position: fixed;
     opacity: 0;
     font: bold 3rem 'Shanghai';
-    animation: 1800ms cubic-bezier(.35,.02,.27,1) bounce;
+    animation: 1800ms cubic-bezier(0.35, 0.02, 0.27, 1) bounce;
 
     @keyframes bounce {
-        50% { transform: translateY(-3rem); opacity: 1; }
+        50% {
+            transform: translateY(-3rem);
+            opacity: 1;
+        }
     }
 }
 
@@ -137,10 +147,10 @@ main {
     display: grid;
     grid-template-columns: repeat(var(--columns), 1fr);
     grid-template-rows: repeat(var(--rows), 1fr);
-    width: min(58vw, 30rem);
+    width: min(58vw, 30rem, 50svh);
 
     &.placement {
-        width: min(75vw, 30rem);
+        width: min(75vw, 30rem, 47svh);
     }
 
     &.player-two > button:hover:not(:disabled) {
@@ -155,18 +165,22 @@ main {
 }
 
 .ships {
-    margin-bottom: 2rem;
+    margin-bottom: min(2svh, 2rem);
     text-align: center;
+    height: 15svh;
     width: min(95vw, 900px);
-    
+    font-size: clamp(0.8rem, 2vmin, 1.2rem);
+
     & > .ship-placement {
         flex: 3;
+        height: 100%;
 
         & > button {
-            margin-block: 0.8rem;
+            margin-block: min(1svh, 0.8rem);
+            min-height: 33%;
 
             & > img {
-                width: 100%;
+                width: 17vmin;
             }
         }
     }
@@ -174,9 +188,9 @@ main {
     & > div:has(#delete, #rotate) {
         flex: 1;
 
-        &  img {
-            margin-block: 0.2rem;
-            width: min(2.5rem, 140%);
+        & img {
+            margin-block: 0.1rem;
+            width: min(2.5rem, 140%, 6vmin);
         }
     }
 }
@@ -261,9 +275,15 @@ button {
     animation: breathe 2.4s linear infinite;
 
     @keyframes breathe {
-        0% { opacity: 0.5; }
-        50% { opacity: 1; }
-        100% { opacity: 0.5; }
+        0% {
+            opacity: 0.5;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0.5;
+        }
     }
 }
 
@@ -272,7 +292,7 @@ button {
         margin: 1rem 0 0;
         height: 3.5rem;
     }
-    
+
     #logo + h1 {
         font-family: 'Shanghai';
         font-size: 2rem;
@@ -287,7 +307,7 @@ button {
         }
 
         & img {
-            max-height: 120px;
+            max-height: 100px;
         }
     }
 
@@ -296,6 +316,19 @@ button {
     }
 
     @keyframes bounce {
-        50% { transform: translateY(-1rem); opacity: 1; }
+        50% {
+            transform: translateY(-2rem);
+            opacity: 1;
+        }
+    }
+}
+
+@media (max-height: 630px) {
+    #start-game {
+        position: fixed;
+        top: 50%;
+        left: 74%;
+        transform: translateY(-50%);
+        font-size: 2.8rem;
     }
 }
