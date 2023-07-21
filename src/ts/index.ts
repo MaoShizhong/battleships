@@ -1,8 +1,9 @@
 import '../css/style.css';
 import '../css/ship_data.css';
+// @ts-ignore
 import cssHasPseudo from 'css-has-pseudo/browser';
 import { Game } from './game_controller';
-import { Placement } from './placement.js';
+import { Placement } from './placement';
 
 // Firefox :has() compatibility
 cssHasPseudo(document, { hover: true });

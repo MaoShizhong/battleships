@@ -2,12 +2,13 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './src/js/index.js',
+    entry: './src/ts/index.ts',
     output: {
         filename: 'main.js',
         path: path.resolve(__dirname, 'dist'),
         clean: true,
     },
+    resolve: { extensions: ['.ts', '.js'] },
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Battleships',
@@ -17,6 +18,11 @@ module.exports = {
     ],
     module: {
         rules: [
+            {
+                test: /\.ts$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
             {
                 test: /\.css$/i,
                 use: [
@@ -29,12 +35,9 @@ module.exports = {
                         loader: 'postcss-loader',
                         options: {
                             postcssOptions: {
-                                plugins: [
-                                    [require('postcss-nested')],
-                                    ['css-has-pseudo',],
-                                ]
-                            }
-                        }
+                                plugins: [[require('postcss-nested')], ['css-has-pseudo']],
+                            },
+                        },
                     },
                 ],
             },

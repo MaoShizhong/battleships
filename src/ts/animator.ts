@@ -1,20 +1,27 @@
 import { UI } from './ui_controller';
+import { Player } from './player';
 
 export class Animator {
     static RESULT_DURATION = 1700;
     static CANNONBALL_DURATION = 1000;
 
-    static createCannonball(attackRecipient) {
+    static createCannonball(attackRecipient: Player): HTMLDivElement {
         const ball = document.createElement('div');
         UI.addClasses([ball], 'ball');
 
         // so attack comes from the attacker's side
         const leftOffset = attackRecipient.isAI ? 10 : 55;
         ball.style.left = `${Math.floor(Math.random() * 35) + leftOffset}%`;
+
         return ball;
     }
 
-    static fireCannonball(attackRecipient, targetBoard, targetY, targetX) {
+    static fireCannonball(
+        attackRecipient: Player,
+        targetBoard: HTMLDivElement,
+        targetY: number,
+        targetX: number
+    ): void {
         const ball = Animator.createCannonball(attackRecipient);
         document.querySelector('body').appendChild(ball);
 
@@ -34,26 +41,31 @@ export class Animator {
                 easing: 'cubic-bezier(.88,-0.03,.82,.61)',
             }
         );
-        setTimeout(() => ball.remove(), Animator.CANNONBALL_DURATION);
+        setTimeout((): void => ball.remove(), Animator.CANNONBALL_DURATION);
     }
 
-    static getSquarePosition(board, y, x) {
+    static getSquarePosition(
+        board: HTMLDivElement,
+        y: number,
+        x: number
+    ): { top: number; left: number } {
         const square = board.querySelector(`[data-y="${y}"][data-x="${x}"]`);
         return {
             top: ((square.getBoundingClientRect().top + window.scrollY) / window.innerHeight) * 100,
-            left: ((square.getBoundingClientRect().left + window.scrollX) / window.innerWidth) * 100,
+            left:
+                ((square.getBoundingClientRect().left + window.scrollX) / window.innerWidth) * 100,
         };
     }
 
-    static showAttackText(attackedBoard, result) {
+    static showAttackText(attackedBoardParent: HTMLElement, result: string): void {
         const h1 = document.createElement('h1');
         h1.textContent = result;
         h1.style.top = `calc(${
-            (attackedBoard.parentNode.getBoundingClientRect().top / window.innerHeight) * 100
+            (attackedBoardParent.getBoundingClientRect().top / window.innerHeight) * 100
         }% - 1rem)`;
         UI.addClasses([h1], 'attack-result');
 
-        attackedBoard.parentNode.appendChild(h1);
-        setTimeout(() => h1.remove(), Animator.RESULT_DURATION);
+        attackedBoardParent.appendChild(h1);
+        setTimeout((): void => h1.remove(), Animator.RESULT_DURATION);
     }
 }
