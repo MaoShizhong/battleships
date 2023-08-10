@@ -10,19 +10,12 @@ module.exports = merge(common, {
                 use: 'html-loader',
             },
             {
-                test: /\.(jpg|png)$/i,
-                type: 'asset/resource',
-                generator: {
-                    filename: 'images/[name]-[hash][ext]',
-                },
-            },
-            {
                 test: /\.(ttf|woff2)$/i,
                 type: 'asset/resource',
                 generator: {
                     filename: 'fonts/[name]-[hash][ext]',
                 },
             },
-        ]
-    }
+        ],
+    },
 });
