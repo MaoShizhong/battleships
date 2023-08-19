@@ -1,4 +1,4 @@
-import { Gameboard } from '../js/gameboard.js';
+import { Gameboard } from '../ts/gameboard';
 
 describe('Board receives hit and handles hit/miss/not valid', () => {
     const board = new Gameboard(5, 5);
@@ -36,7 +36,9 @@ describe('Board receives hit and handles hit/miss/not valid', () => {
         expect(castAttack(4, 1)).toEqual(hit);
     });
     it('Throws an error if attack targets a previously attacked square', () => {
-        expect(attackRepeatSquare).toThrow(new Error('You have already targeted this square before! Please pick another square.'));
+        expect(attackRepeatSquare).toThrow(
+            new Error('You have already targeted this square before! Please pick another square.')
+        );
     });
     it('Throws an error if attempting to attack a square that is out of bounds', () => {
         expect(attackOutOfBoundsSquare).toThrow(new Error('This square is out of bounds!'));
@@ -51,13 +53,32 @@ describe('Successful hit registers on respective ship', () => {
     board.receiveAttack(1, 4);
 
     const shipCoordinates = [
-        [2, 0, [[0, 0], [0, 1], ['X', 'X'], [0, 3], [0, 4]]],
-        [4, 1, [[1, 0], [1, 1], [1, 2], [1, 3], ['X', 'X']]],
+        [
+            2,
+            0,
+            [
+                [0, 0],
+                [0, 1],
+                ['X', 'X'],
+                [0, 3],
+                [0, 4],
+            ],
+        ],
+        [
+            4,
+            1,
+            [
+                [1, 0],
+                [1, 1],
+                [1, 2],
+                [1, 3],
+                ['X', 'X'],
+            ],
+        ],
     ];
 
-    test.each(shipCoordinates)(
-        "Shows hit ['X', 'X'] at index %d",
-        (index, shipIndex, array) => expect(board.ships[shipIndex].coordinates).toEqual(array)
+    test.each(shipCoordinates)("Shows hit ['X', 'X'] at index %d", (index, shipIndex, array) =>
+        expect(board.ships[shipIndex].coordinates).toEqual(array)
     );
 });
 
@@ -67,14 +88,22 @@ describe('Hitting all ship squares sinks and removes ship from board instance', 
     board.placeShip(4, 0);
 
     const sinkShip = (y) => {
-        [[y, 0], [y, 1], [y, 2], [y, 3], [y, 4]].forEach(square => {
+        [
+            [y, 0],
+            [y, 1],
+            [y, 2],
+            [y, 3],
+            [y, 4],
+        ].forEach((square) => {
             board.receiveAttack(square[0], square[1]);
         });
         return board.ships.length;
     };
 
     const findShipByCoordinate = (y, x) => {
-        return board.ships.includes(board.ships.find(ship => ship.coordinates.find(([a, b]) => a === y && b === x)));
+        return board.ships.includes(
+            board.ships.find((ship) => ship.coordinates.find(([a, b]) => a === y && b === x))
+        );
     };
 
     it('Contains the first ship in the instance ship array', () => {

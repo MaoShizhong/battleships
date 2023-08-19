@@ -1,8 +1,10 @@
+export type Coordinate = [number, number, string?];
+
 export class Ship {
-    coordinates: (string | number)[][];
+    coordinates: Coordinate[];
     name: string;
 
-    constructor(coordinates: number[][]) {
+    constructor(coordinates: Coordinate[]) {
         this.coordinates = coordinates;
         this.name = Ship.shipName(this.coordinates.length);
     }
@@ -13,7 +15,7 @@ export class Ship {
     }
 
     get isSunk(): boolean {
-        return this.coordinates.every((coordinate: number[]) => coordinate.length === 3);
+        return this.coordinates.every((coordinate: Coordinate) => coordinate.length === 3);
     }
 
     static shipName(length: number): string {

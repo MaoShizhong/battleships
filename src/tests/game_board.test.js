@@ -1,4 +1,4 @@
-import { Gameboard } from '../js/gameboard.js';
+import { Gameboard } from '../ts/gameboard';
 
 describe('Initialise gameboard as 2D array of false (no ships)', () => {
     const fiveByfive = [
@@ -19,9 +19,8 @@ describe('Initialise gameboard as 2D array of false (no ships)', () => {
         ['4x7', new Gameboard(4, 7), fourBySeven],
     ];
 
-    test.each(gameboards)(
-        'Instantiates board with %s grid',
-        (string, board, array) => expect(board.board).toEqual(array)
+    test.each(gameboards)('Instantiates board with %s grid', (string, board, array) =>
+        expect(board.board).toEqual(array)
     );
 });
 
@@ -85,8 +84,12 @@ describe('Places ship on board if can fit', () => {
     test('Should show board instance now has 1 ship', () => {
         expect(board.ships.length).toBe(1);
     });
-    it('(The ship) has coordinates matching the board\'s true cells', () => {
-        expect(board.ships[0].coordinates).toEqual([[0, 2], [0, 3], [0, 4]]);
+    it("(The ship) has coordinates matching the board's true cells", () => {
+        expect(board.ships[0].coordinates).toEqual([
+            [0, 2],
+            [0, 3],
+            [0, 4],
+        ]);
     });
     it('Correctly places 4-long vertical ship on board', () => {
         expect(getBoardAfterPlace('vertical', 4, 1, 2)).toEqual(twoShips);
@@ -97,10 +100,14 @@ describe('Places ship on board if can fit', () => {
     test('Should show board instance having only 3 remaining ships to place', () => {
         expect(board.shipsRemaining).toBe(3);
     });
-    it('(The second ship) has coordinates matching the board\'s new true cells', () => {
-        expect(board.ships[1].coordinates).toEqual([[1, 2], [2, 2], [3, 2], [4, 2]]);
+    it("(The second ship) has coordinates matching the board's new true cells", () => {
+        expect(board.ships[1].coordinates).toEqual([
+            [1, 2],
+            [2, 2],
+            [3, 2],
+            [4, 2],
+        ]);
     });
-
 
     const attemptIntersect = () => {
         board.currentShipOrientation = 'horizontal';
@@ -123,7 +130,7 @@ describe('Places ship on board if can fit', () => {
 
 describe('Board rejects ship placement if no ships remaining to place', () => {
     const board = new Gameboard(10, 10);
-    [0, 1, 2, 3, 4].forEach(i => board.placeShip(i, 0));
+    [0, 1, 2, 3, 4].forEach((i) => board.placeShip(i, 0));
 
     const attemptPlacementFits = () => board.placeShip(5, 0);
     const attemptIntersect = () => board.placeShip(3, 1);

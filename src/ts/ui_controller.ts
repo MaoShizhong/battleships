@@ -7,8 +7,11 @@ export class UI {
     static renderBoard(board: HTMLDivElement, cells: string[][] | null = null, isAI = true): void {
         board.replaceChildren();
 
-        for (let i = 0; i < Gameboard.WIDTH; i++) {
-            for (let j = 0; j < Gameboard.HEIGHT; j++) {
+        board.style.setProperty('--rows', Gameboard.HEIGHT.toString());
+        board.style.setProperty('--columns', Gameboard.WIDTH.toString());
+
+        for (let i = 0; i < Gameboard.HEIGHT; i++) {
+            for (let j = 0; j < Gameboard.WIDTH; j++) {
                 const square = document.createElement('button');
 
                 if (!isAI) {

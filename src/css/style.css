@@ -2,7 +2,8 @@
 
 @font-face {
     font-family: 'Shanghai';
-    src: url('../fonts/shanghai.woff2') format('woff2'), url('../fonts/shanghai.ttf') format('truetype');
+    src: url('../fonts/shanghai.woff2') format('woff2'),
+        url('../fonts/shanghai.ttf') format('truetype');
 }
 
 :root {

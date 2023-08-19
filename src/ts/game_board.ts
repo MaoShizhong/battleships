@@ -4,6 +4,7 @@ import { UI } from './ui_controller';
 import { Placement } from './placement';
 import { Animator } from './animator';
 import { game } from './index';
+import { Coordinate } from './ship';
 
 interface ShipLimits {
     [index: string]: number;
@@ -16,8 +17,16 @@ export class Gameboard {
     ships: Ship[];
     shipLimits: ShipLimits;
 
-    static HEIGHT = 10;
-    static WIDTH = 10;
+    static #HEIGHT = 10;
+    static #WIDTH = 10;
+
+    static get HEIGHT() {
+        return Gameboard.#HEIGHT;
+    }
+
+    static get WIDTH() {
+        return Gameboard.#WIDTH;
+    }
 
     constructor(isAI: boolean, selector: string) {
         this.UIBoard = document.querySelector(selector);
@@ -25,6 +34,7 @@ export class Gameboard {
         this.board = Array.from({ length: Gameboard.HEIGHT }, (): string[] =>
             Array(Gameboard.WIDTH).fill('none')
         );
+        console.log(this.board);
         this.ships = [];
         this.shipLimits = {
             Zhanxian: 1,
@@ -34,20 +44,23 @@ export class Gameboard {
         };
     }
 
-    canFitShip(y: number, x: number, size: number, orientation: string): boolean {
+    canFitShip(y: number, x: number, shipSize: number, orientation: string): boolean {
         const inBounds =
-            (orientation === 'horizontal' && x + size <= Gameboard.WIDTH && y < Gameboard.HEIGHT) ||
-            (orientation === 'vertical' && y + size <= Gameboard.HEIGHT && x < Gameboard.WIDTH);
+            (orientation === 'vertical' && y + shipSize <= Gameboard.HEIGHT) ||
+            (orientation === 'horizontal' && x + shipSize <= Gameboard.WIDTH);
 
         if (!inBounds) {
             return false;
         }
 
-        for (let i = 0; i < size; i++) {
-            if (this.board[y][x].includes('ship')) return false;
+        for (let i = 0; i < shipSize; i++) {
+            if (this.board[y][x].includes('ship')) {
+                return false;
+            }
 
             orientation === 'vertical' ? y++ : x++;
         }
+
         return true;
     }
 
@@ -61,7 +74,7 @@ export class Gameboard {
             return;
         }
 
-        const shipCoordinates = [];
+        const shipCoordinates: Coordinate[] = [];
 
         for (let i = 0; i < size; i++) {
             const position = i === 0 ? 'head' : i === size - 1 ? 'end' : 'middle';
@@ -92,7 +105,7 @@ export class Gameboard {
         const ship = this.findShip(y, x);
 
         if (ship) {
-            ship.coordinates.forEach((coordinate: number[]) => {
+            ship.coordinates.forEach((coordinate) => {
                 this.board[coordinate[0]][coordinate[1]] = 'none';
             });
 
@@ -175,9 +188,9 @@ export class Gameboard {
         }
     }
 
-    updateAIShipSunkStatus(coordinates: (string | number)[][]): void {
+    updateAIShipSunkStatus(coordinates: Coordinate[]): void {
         coordinates.forEach(
-            (coordinate: number[]): string => (this.board[coordinate[0]][coordinate[1]] += ' sunk')
+            (coordinate): string => (this.board[coordinate[0]][coordinate[1]] += ' sunk')
         );
     }
 
@@ -190,8 +203,8 @@ export class Gameboard {
     }
 
     findShip(y: number, x: number): Ship {
-        return this.ships.find((ship): (string | number)[] =>
-            ship.coordinates.find(([a, b]) => a === y && b === x)
+        return this.ships.find(
+            (ship): Coordinate => ship.coordinates.find(([a, b]) => a === y && b === x)
         );
     }
 
