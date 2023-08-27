@@ -113,8 +113,8 @@ export class UI {
         UI.removeClasses([placement], 'placement');
 
         const eventListeners: { [index: string]: EventListener } = {
-            mouseover: Placement.highlightSquares,
-            mouseout: Placement.removeHighlightOnMouseout,
+            mouseover: (e): void => Placement.handleHighlightSquares(e, false),
+            mouseout: (e): void => Placement.handleHighlightSquares(e, true),
             click: Placement.placeShip,
         };
 

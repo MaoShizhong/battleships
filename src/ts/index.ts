@@ -19,6 +19,8 @@ export let game = new Game();
 deleteBtn.addEventListener('click', Placement.toggleDeleteMode);
 rotateBtn.addEventListener('click', Placement.changeDirection);
 shipBtns.forEach((btn) => btn.addEventListener('click', Placement.changeShipSize));
-placementBoard.addEventListener('mouseover', Placement.highlightSquares);
-placementBoard.addEventListener('mouseout', Placement.removeHighlightOnMouseout);
+placementBoard.addEventListener('mouseover', (e): void =>
+    Placement.handleHighlightSquares(e, false)
+);
+placementBoard.addEventListener('mouseout', (e): void => Placement.handleHighlightSquares(e, true));
 placementBoard.addEventListener('click', Placement.placeShip);

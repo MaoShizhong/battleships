@@ -26,41 +26,28 @@ export class Placement {
         direction.textContent = Placement.currentShipOrientation === 'horizontal' ? 'H' : 'V';
     }
 
-    static highlightSquares(e: Event): void {
+    static handleHighlightSquares(e: Event, isMouseOut: boolean): void {
         const square = e.target as HTMLButtonElement;
 
         if (square.tagName === 'BUTTON' && !Placement.inDeleteMode) {
             const squaresToEdge = Placement.getSquaresToEdge(square);
 
-            const inBounds = Placement.currentShipSize <= squaresToEdge;
+            const inBounds = isMouseOut ? false : Placement.currentShipSize <= squaresToEdge;
+            let willCollide = false;
 
             if (!square.dataset.cell.includes('ship')) {
                 square.style.backgroundColor = inBounds ? 'var(--c-red)' : 'var(--oob)';
+            } else {
+                willCollide = true;
             }
 
             Placement.applyBackgroundToAdjacentSquares(
                 e.currentTarget as HTMLElement,
                 square,
                 squaresToEdge,
-                false,
-                inBounds
-            );
-        }
-    }
-
-    static removeHighlightOnMouseout(e: Event): void {
-        const square = e.target as HTMLElement;
-
-        if (square.tagName === 'BUTTON' && !Placement.inDeleteMode) {
-            const squaresToEdge = Placement.getSquaresToEdge(square);
-
-            square.style.backgroundColor = null;
-
-            Placement.applyBackgroundToAdjacentSquares(
-                e.currentTarget as HTMLElement,
-                square,
-                squaresToEdge,
-                true
+                isMouseOut,
+                inBounds,
+                willCollide
             );
         }
     }
@@ -69,25 +56,37 @@ export class Placement {
         board: HTMLElement,
         square: HTMLElement,
         squaresToEdge: number,
-        mouseout: boolean,
-        inBounds = false
+        isMouseOut: boolean,
+        inBounds: boolean,
+        willCollide: boolean
     ): void {
-        const offset = Placement.getNextSquareOffset();
+        const offset = Placement.nextSquareOffset;
+
+        const squares = [square];
 
         for (let i = 1; i < Math.min(Placement.currentShipSize, squaresToEdge); i++) {
             const currentIndex = [...square.parentNode.children].indexOf(square);
             square = board.querySelector(`button:nth-child(${currentIndex + offset + 1})`);
+
+            if (square.dataset.cell.includes('ship')) {
+                willCollide = true;
+            }
+
+            squares.push(square);
+        }
+
+        squares.forEach((square) => {
             if (!square.dataset.cell.includes('ship')) {
-                square.style.backgroundColor = mouseout
+                square.style.backgroundColor = isMouseOut
                     ? null
-                    : inBounds
+                    : inBounds && !willCollide
                     ? 'var(--c-red)'
                     : 'var(--oob)';
             }
-        }
+        });
     }
 
-    static getNextSquareOffset(): number {
+    static get nextSquareOffset(): number {
         return Placement.currentShipOrientation === 'horizontal' ? 1 : Gameboard.WIDTH;
     }
 
