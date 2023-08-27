@@ -22,6 +22,7 @@ export class Placement {
         Placement.currentShipOrientation =
             Placement.currentShipOrientation === 'horizontal' ? 'vertical' : 'horizontal';
 
+        // change visuals
         const direction = document.querySelector('#rotate > h2');
         direction.textContent = Placement.currentShipOrientation === 'horizontal' ? 'H' : 'V';
     }
@@ -29,27 +30,31 @@ export class Placement {
     static handleHighlightSquares(e: Event, isMouseOut: boolean): void {
         const square = e.target as HTMLButtonElement;
 
-        if (square.tagName === 'BUTTON' && !Placement.inDeleteMode) {
-            const squaresToEdge = Placement.getSquaresToEdge(square);
-
-            const inBounds = isMouseOut ? false : Placement.currentShipSize <= squaresToEdge;
-            let willCollide = false;
-
-            if (!square.dataset.cell.includes('ship')) {
-                square.style.backgroundColor = inBounds ? 'var(--c-red)' : 'var(--oob)';
-            } else {
-                willCollide = true;
-            }
-
-            Placement.applyBackgroundToAdjacentSquares(
-                e.currentTarget as HTMLElement,
-                square,
-                squaresToEdge,
-                isMouseOut,
-                inBounds,
-                willCollide
-            );
+        if (square.tagName !== 'BUTTON' || Placement.inDeleteMode) {
+            return;
         }
+
+        const squaresToEdge = Placement.getSquaresToEdge(square);
+        const isInBounds = isMouseOut ? false : Placement.currentShipSize <= squaresToEdge;
+        let willCollide = false;
+
+        // apply colour feedback to hovered cell only
+        if (!square.dataset.cell.includes('ship')) {
+            square.style.backgroundColor = isInBounds ? 'var(--c-red)' : 'var(--oob)';
+        } else {
+            // handles when the last cell of a ship is the hovered cell
+            willCollide = true;
+        }
+
+        // apply color feedback to the other relevant cells
+        Placement.applyBackgroundToAdjacentSquares(
+            e.currentTarget as HTMLElement,
+            square,
+            squaresToEdge,
+            isMouseOut,
+            isInBounds,
+            willCollide
+        );
     }
 
     static applyBackgroundToAdjacentSquares(
@@ -57,13 +62,13 @@ export class Placement {
         square: HTMLElement,
         squaresToEdge: number,
         isMouseOut: boolean,
-        inBounds: boolean,
+        isInBounds: boolean,
         willCollide: boolean
     ): void {
         const offset = Placement.nextSquareOffset;
-
         const squares = [square];
 
+        // get all button elements to be highlighted
         for (let i = 1; i < Math.min(Placement.currentShipSize, squaresToEdge); i++) {
             const currentIndex = [...square.parentNode.children].indexOf(square);
             square = board.querySelector(`button:nth-child(${currentIndex + offset + 1})`);
@@ -75,11 +80,12 @@ export class Placement {
             squares.push(square);
         }
 
+        // apply or remove appropriate highlighting
         squares.forEach((square) => {
             if (!square.dataset.cell.includes('ship')) {
                 square.style.backgroundColor = isMouseOut
                     ? null
-                    : inBounds && !willCollide
+                    : isInBounds && !willCollide
                     ? 'var(--c-red)'
                     : 'var(--oob)';
             }
@@ -114,7 +120,7 @@ export class Placement {
         const deleteBtn = document.querySelector('#delete');
         deleteBtn.classList.toggle('current');
 
-        const btnsToDisable: NodeListOf<HTMLButtonElement> = document.querySelectorAll(
+        const btnsToDisable = document.querySelectorAll<HTMLButtonElement>(
             '.ships button:not(#delete)'
         );
         btnsToDisable.forEach((btn) => {
