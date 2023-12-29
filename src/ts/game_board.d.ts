@@ -1,6 +1,5 @@
 import { Player } from './player';
-import { Ship } from './ship';
-import { Coordinate } from './ship';
+import { Coordinate, Ship } from './ship';
 interface ShipLimits {
     [index: string]: number;
 }
