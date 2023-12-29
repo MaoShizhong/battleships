@@ -1,10 +1,9 @@
-import { Player } from './player';
-import { Ship } from './ship';
-import { UI } from './ui_controller';
-import { Placement } from './placement';
 import { Animator } from './animator';
 import { game } from './index';
-import { Coordinate } from './ship';
+import { Placement } from './placement';
+import { Player } from './player';
+import { Coordinate, Ship } from './ship';
+import { UI } from './ui_controller';
 
 interface ShipLimits {
     [index: string]: number;
@@ -34,7 +33,6 @@ export class Gameboard {
         this.board = Array.from({ length: Gameboard.HEIGHT }, (): string[] =>
             Array(Gameboard.WIDTH).fill('none')
         );
-        console.log(this.board);
         this.ships = [];
         this.shipLimits = {
             Zhanxian: 1,
